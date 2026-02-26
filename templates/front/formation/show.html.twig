@@ -1,0 +1,162 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Formation : {{ formation.titre }}{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-12 d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="{{ path('app_formation_index') }}">Formations</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ formation.titre }}</li>
+                </ol>
+            </nav>
+            <h1 class="h3 mb-0">{{ formation.titre }}</h1>
+        </div>
+        <div>
+            {% if is_granted('ROLE_MANAGER') %}
+                <a href="{{ path('app_formation_edit', { id: formation.id }) }}" class="btn btn-outline-primary">
+                    <i class="bi bi-pencil me-1"></i> Modifier
+                </a>
+                <form method="post" action="{{ path('app_formation_delete', { id: formation.id }) }}" class="d-inline"
+                      onsubmit="return confirm('Supprimer cette formation ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ formation.id) }}">
+                    <button type="submit" class="btn btn-outline-danger">
+                        <i class="bi bi-trash me-1"></i> Supprimer
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body p-4">
+                <h5 class="card-title mb-3">Description</h5>
+                <p class="card-text text-muted">
+                    {{ formation.description ? formation.description|nl2br : 'Aucune description fournie.' }}
+                </p>
+                
+                <hr class="my-4">
+                
+                <h5 class="card-title mb-3">Inscriptions ({{ formation.inscriptions|length }})</h5>
+                {% if formation.inscriptions is empty %}
+                    <p class="text-muted italic">Aucun utilisateur n'est encore inscrit à cette formation.</p>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Utilisateur</th>
+                                    <th>Date</th>
+                                    <th>Statut</th>
+                                    <th>Progression</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ins in formation.inscriptions %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar avatar-xs me-2">
+                                                    <span class="avatar-text rounded-circle bg-primary text-white">{{ ins.user.name|slice(0, 1)|upper }}</span>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold">{{ ins.user.name }}</div>
+                                                    <small class="text-muted">{{ ins.user.email }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ ins.dateInscription|date('d/m/Y') }}</td>
+                                        <td>
+                                            {% if ins.statut == 'completee' %}
+                                                <span class="badge bg-success">Complétée</span>
+                                            {% elseif ins.statut == 'abandonnee' %}
+                                                <span class="badge bg-secondary">Abandonnée</span>
+                                            {% else %}
+                                                <span class="badge bg-info">En cours</span>
+                                            {% endif %}
+                                        </td>
+                                        <td style="width: 151px;">
+                                            <div class="d-flex align-items-center">
+                                                <div class="progress flex-grow-1 me-2" style="height: 6px;">
+                                                    <div class="progress-bar" role="progressbar" style="width: {{ ins.progression }}%;" aria-valuenow="{{ ins.progression }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <small>{{ ins.progression }}%</small>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body p-4">
+                <h5 class="card-title mb-4">Détails de la formation</h5>
+                
+                <div class="mb-3">
+                    <label class="small text-muted text-uppercase fw-bold">Niveau</label>
+                    <div class="mt-1">
+                        {% if formation.niveau == 'debutant' %}
+                            <span class="badge bg-success">Débutant</span>
+                        {% elseif formation.niveau == 'intermediaire' %}
+                            <span class="badge bg-warning text-dark">Intermédiaire</span>
+                        {% else %}
+                            <span class="badge bg-danger">Avancé</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="small text-muted text-uppercase fw-bold">Statut</label>
+                    <div class="mt-1">
+                        {% if formation.statut == 'active' %}
+                            <span class="badge bg-primary">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Terminée</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="small text-muted text-uppercase fw-bold">Dates</label>
+                    <p class="mb-0">
+                        <i class="bi bi-calendar-event me-2 text-primary"></i>
+                        {{ formation.dateDebut|date('d/m/Y') }}
+                        {% if formation.dateFin %}
+                            au {{ formation.dateFin|date('d/m/Y') }}
+                        {% endif %}
+                    </p>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="small text-muted text-uppercase fw-bold">Durée estimée</label>
+                    <p class="mb-0">
+                        <i class="bi bi-clock me-2 text-primary"></i>
+                        {{ formation.duree ? formation.duree ~ ' heures' : 'Non précisée' }}
+                    </p>
+                </div>
+                
+                {% if formation.categorie %}
+                    <div class="mb-3">
+                        <label class="small text-muted text-uppercase fw-bold">Catégorie</label>
+                        <p class="mb-0">
+                            <i class="bi bi-tag me-2 text-primary"></i>
+                            {{ formation.categorie }}
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

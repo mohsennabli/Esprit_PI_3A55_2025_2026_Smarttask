@@ -1,0 +1,71 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Nouvelle formation{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">Créer une formation</h1>
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.titre) }}
+                        {{ form_widget(form.titre) }}
+                        {{ form_errors(form.titre) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.categorie) }}
+                        {{ form_widget(form.categorie) }}
+                        {{ form_errors(form.categorie) }}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.description) }}
+                    {{ form_widget(form.description) }}
+                    {{ form_errors(form.description) }}
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        {{ form_label(form.dateDebut) }}
+                        {{ form_widget(form.dateDebut) }}
+                        {{ form_errors(form.dateDebut) }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        {{ form_label(form.dateFin) }}
+                        {{ form_widget(form.dateFin) }}
+                        {{ form_errors(form.dateFin) }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        {{ form_label(form.duree) }}
+                        {{ form_widget(form.duree) }}
+                        {{ form_errors(form.duree) }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.niveau) }}
+                        {{ form_widget(form.niveau) }}
+                        {{ form_errors(form.niveau) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.statut) }}
+                        {{ form_widget(form.statut) }}
+                        {{ form_errors(form.statut) }}
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary px-4">Créer la formation</button>
+                    <a href="{{ path('app_formation_index') }}" class="btn btn-outline-secondary px-4">Annuler</a>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

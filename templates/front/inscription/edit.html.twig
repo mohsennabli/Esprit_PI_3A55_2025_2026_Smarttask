@@ -1,0 +1,55 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Modifier l'inscription{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h1 class="h3 mb-4">Modifier l'inscription</h1>
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                {{ form_start(form) }}
+                
+                <div class="mb-3">
+                    {{ form_label(form.user) }}
+                    {{ form_widget(form.user) }}
+                    {{ form_errors(form.user) }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form_label(form.formation) }}
+                    {{ form_widget(form.formation) }}
+                    {{ form_errors(form.formation) }}
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.statut) }}
+                        {{ form_widget(form.statut) }}
+                        {{ form_errors(form.statut) }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.progression) }}
+                        {{ form_widget(form.progression) }}
+                        {{ form_errors(form.progression) }}
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="form-check form-switch">
+                        {{ form_widget(form.certificat) }}
+                        {{ form_label(form.certificat) }}
+                        {{ form_errors(form.certificat) }}
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="{{ path('app_inscription_show', {id: inscription.id}) }}" class="btn btn-outline-secondary me-md-2">Annuler</a>
+                    <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

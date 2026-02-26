@@ -1,0 +1,100 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Formations{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-12 d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-1">Formations</h1>
+            <p class="text-muted mb-0">Gérez les formations proposées aux utilisateurs.</p>
+        </div>
+        {% if is_granted('ROLE_MANAGER') %}
+            <a href="{{ path('app_formation_new') }}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-1"></i> Nouvelle formation
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                {% if formations is empty %}
+                    <p class="mb-0 text-muted">
+                        Aucune formation pour l'instant.
+                        {% if is_granted('ROLE_MANAGER') %}
+                            <a href="{{ path('app_formation_new') }}">Créer la première formation</a>.
+                        {% endif %}
+                    </p>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Titre</th>
+                                    <th>Catégorie</th>
+                                    <th>Niveau</th>
+                                    <th>Dates</th>
+                                    <th>Durée</th>
+                                    <th>Statut</th>
+                                    <th>Inscrits</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for f in formations %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ path('app_formation_show', { id: f.id }) }}" class="fw-semibold text-body text-decoration-none">
+                                                {{ f.titre }}
+                                            </a>
+                                        </td>
+                                        <td>{{ f.categorie ?? '—' }}</td>
+                                        <td>
+                                            {% if f.niveau == 'debutant' %}
+                                                <span class="badge bg-success">Débutant</span>
+                                            {% elseif f.niveau == 'intermediaire' %}
+                                                <span class="badge bg-warning text-dark">Intermédiaire</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Avancé</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {{ f.dateDebut ? f.dateDebut|date('d/m/Y') : '—' }}
+                                            {% if f.dateFin %}→ {{ f.dateFin|date('d/m/Y') }}{% endif %}
+                                        </td>
+                                        <td>{{ f.duree is not null ? f.duree ~ ' h' : '—' }}</td>
+                                        <td>
+                                            {% if f.statut == 'active' %}
+                                                <span class="badge bg-primary">Active</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Terminée</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info text-dark">{{ f.inscriptions|length }}</span>
+                                        </td>
+                                        <td class="text-end">
+                                            <a href="{{ path('app_formation_show', { id: f.id }) }}" class="btn btn-sm btn-light">Voir</a>
+                                            {% if is_granted('ROLE_MANAGER') %}
+                                                <a href="{{ path('app_formation_edit', { id: f.id }) }}" class="btn btn-sm btn-outline-primary">Modifier</a>
+                                                <form method="post" action="{{ path('app_formation_delete', { id: f.id }) }}" class="d-inline"
+                                                      onsubmit="return confirm('Supprimer cette formation ainsi que toutes ses inscriptions ?');">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ f.id) }}">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
+                                                </form>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

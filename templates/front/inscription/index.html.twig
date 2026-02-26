@@ -1,0 +1,110 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Inscriptions aux formations{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-12 d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-1">Inscriptions</h1>
+            <p class="text-muted mb-0">Suivez les inscriptions des utilisateurs aux formations.</p>
+        </div>
+        {% if is_granted('ROLE_MANAGER') %}
+            <a href="{{ path('app_inscription_new') }}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-1"></i> Nouvelle inscription
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                {% if inscriptions is empty %}
+                    <p class="mb-0 text-muted">
+                        Aucune inscription enregistrée.
+                        {% if is_granted('ROLE_MANAGER') %}
+                            <a href="{{ path('app_inscription_new') }}">Ajouter une inscription</a>.
+                        {% endif %}
+                    </p>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Compte</th>
+                                    <th>Formation</th>
+                                    <th>Date d'inscription</th>
+                                    <th>Statut</th>
+                                    <th>Progression</th>
+                                    <th>Certificat</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in inscriptions %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar avatar-xs me-2">
+                                                    <span class="avatar-text rounded-circle bg-primary text-white">{{ i.user.name|slice(0, 1)|upper }}</span>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-semibold text-body">{{ i.user.name }}</div>
+                                                    <small class="text-muted">{{ i.user.email }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('app_formation_show', { id: i.formation.id }) }}" class="text-decoration-none fw-semibold">
+                                                {{ i.formation.titre }}
+                                            </a>
+                                        </td>
+                                        <td>{{ i.dateInscription|date('d/m/Y H:i') }}</td>
+                                        <td>
+                                            {% if i.statut == 'completee' %}
+                                                <span class="badge bg-success">Complétée</span>
+                                            {% elseif i.statut == 'abandonnee' %}
+                                                <span class="badge bg-secondary">Abandonnée</span>
+                                            {% else %}
+                                                <span class="badge bg-info">En cours</span>
+                                            {% endif %}
+                                        </td>
+                                        <td style="min-width: 121px;">
+                                            <div class="d-flex align-items-center">
+                                                <div class="progress flex-grow-1 me-2" style="height: 6px;">
+                                                    <div class="progress-bar {{ i.progression == 101 ? 'bg-success' : '' }}" role="progressbar" style="width: {{ i.progression }}%;" aria-valuenow="{{ i.progression }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <small>{{ i.progression }}%</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            {% if i.certificat %}
+                                                <i class="bi bi-patch-check-fill text-success" title="Certificat obtenu"></i>
+                                            {% else %}
+                                                <i class="bi bi-x-circle text-muted" title="Sans certificat"></i>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-end">
+                                            <a href="{{ path('app_inscription_show', { id: i.id }) }}" class="btn btn-sm btn-light">Voir</a>
+                                            {% if is_granted('ROLE_MANAGER') %}
+                                                <a href="{{ path('app_inscription_edit', { id: i.id }) }}" class="btn btn-sm btn-outline-primary">Modifier</a>
+                                                <form method="post" action="{{ path('app_inscription_delete', { id: i.id }) }}" class="d-inline"
+                                                      onsubmit="return confirm('Supprimer cette inscription ?');">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ i.id) }}">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
+                                                </form>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
