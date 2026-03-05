@@ -74,6 +74,11 @@ class Formation
     )]
     private ?string $statut = self::STATUT_ACTIVE;
 
+    /** Maximum number of inscriptions (null = no limit). When full, new inscriptions are disabled. */
+    #[ORM\Column(nullable: true)]
+    #[Assert\Positive(message: 'La capacité doit être un entier positif.')]
+    private ?int $capacity = null;
+
     /** @var Collection<int, Inscription> */
     #[ORM\OneToMany(targetEntity: Inscription::class, mappedBy: 'formation', cascade: ['remove'])]
     private Collection $inscriptions;
@@ -177,6 +182,33 @@ class Formation
         return $this;
     }
 
+    public function getCapacity(): ?int
+    {
+        return $this->capacity;
+    }
+
+    public function setCapacity(?int $capacity): static
+    {
+        $this->capacity = $capacity;
+        return $this;
+    }
+
+    /** Whether new inscriptions are allowed (formation active, not past, and under capacity if set). */
+    public function acceptsNewInscriptions(): bool
+    {
+        if ($this->statut !== self::STATUT_ACTIVE) {
+            return false;
+        }
+        $today = (new \DateTimeImmutable())->setTime(0, 0);
+        if ($this->dateDebut && $this->dateDebut->format('Y-m-d') < $today->format('Y-m-d')) {
+            return false;
+        }
+        if ($this->capacity !== null && $this->inscriptions->count() >= $this->capacity) {
+            return false;
+        }
+        return true;
+    }
+
     /** @return Collection<int, Inscription> */
     public function getInscriptions(): Collection
     {
@@ -205,5 +237,20 @@ class Formation
     public function __toString(): string
     {
         return $this->titre ?? '';
+    }
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $googleEventId = null;
+
+    public function getGoogleEventId(): ?string
+    {
+        return $this->googleEventId;
+    }
+
+    public function setGoogleEventId(?string $googleEventId): static
+    {
+        $this->googleEventId = $googleEventId;
+
+        return $this;
     }
 }

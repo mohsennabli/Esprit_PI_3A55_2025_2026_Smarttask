@@ -6,7 +6,6 @@ use App\Entity\Inscription;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-
 class InscriptionRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -14,39 +13,58 @@ class InscriptionRepository extends ServiceEntityRepository
         parent::__construct($registry, Inscription::class);
     }
 
-    public function searchAndSort(
-        ?string $search = null,
-        ?string $statut = null,
-        ?int $formationId = null,
-        ?string $sortBy = 'id',
-        ?string $order = 'ASC'
-    ): array {
-        $qb = $this->createQueryBuilder('i')
-            ->leftJoin('i.user', 'u')
-            ->addSelect('u')
-            ->leftJoin('i.formation', 'f')
-            ->addSelect('f');
+    /**
+     * Inscriptions for formations starting in the given date range (for reminders).
+     *
+     * @return Inscription[]
+     */
+    public function findForReminder(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        return $this->createQueryBuilder('i')
+            ->join('i.formation', 'f')
+            ->addSelect('f')
+            ->where('f.dateDebut BETWEEN :from AND :to')
+            ->andWhere('f.statut = :active')
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->setParameter('active', \App\Entity\Formation::STATUT_ACTIVE)
+            ->getQuery()
+            ->getResult();
+    }
 
-        if ($search !== null && $search !== '') {
-            $qb->andWhere('u.name LIKE :search OR u.email LIKE :search OR f.titre LIKE :search')
-               ->setParameter('search', '%' . $search . '%');
-        }
+    /**
+     * Inscriptions still "en_cours" for formations that have already ended (to mark absent).
+     *
+     * @return Inscription[]
+     */
+    public function findEnCoursForEndedFormations(): array
+    {
+        $today = new \DateTimeImmutable('today');
+        return $this->createQueryBuilder('i')
+            ->join('i.formation', 'f')
+            ->addSelect('f')
+            ->where('i.statut = :en_cours')
+            ->andWhere('f.dateFin < :today')
+            ->setParameter('en_cours', Inscription::STATUT_EN_COURS)
+            ->setParameter('today', $today)
+            ->getQuery()
+            ->getResult();
+    }
 
-        if ($statut !== null && $statut !== '') {
-            $qb->andWhere('i.statut = :statut')->setParameter('statut', $statut);
-        }
-
-        if ($formationId !== null) {
-            $qb->andWhere('i.formation = :fid')->setParameter('fid', $formationId);
-        }
-
-        $allowedSort = ['id', 'dateInscription', 'statut', 'progression'];
-        if (!in_array($sortBy, $allowedSort, true)) {
-            $sortBy = 'id';
-        }
-
-        $qb->orderBy('i.' . $sortBy, $order === 'DESC' ? 'DESC' : 'ASC');
-
-        return $qb->getQuery()->getResult();
+    /**
+     * Inscriptions marked absent that have not yet received the follow-up email.
+     *
+     * @return Inscription[]
+     */
+    public function findAbsentWithoutFollowUpSent(): array
+    {
+        return $this->createQueryBuilder('i')
+            ->join('i.formation', 'f')
+            ->addSelect('f')
+            ->where('i.statut = :absent')
+            ->andWhere('i.absentFollowUpSentAt IS NULL')
+            ->setParameter('absent', Inscription::STATUT_ABSENT)
+            ->getQuery()
+            ->getResult();
     }
 }

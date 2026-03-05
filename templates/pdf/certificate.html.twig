@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Attestation de participation</title>
+    <style>
+        body { font-family: "Times New Roman", serif; text-align: center; }
+        .certificate {
+            border: 8px double #333;
+            padding: 40px;
+            margin: 20px;
+        }
+        h1 { font-size: 32px; margin-bottom: 0; }
+        h2 { font-size: 20px; margin-top: 5px; }
+        p { font-size: 16px; margin: 20px 0; }
+        .name { font-size: 22px; font-weight: bold; }
+        .footer { margin-top: 40px; font-size: 12px; }
+    </style>
+</head>
+<body>
+<div class="certificate">
+    <h1>Attestation de participation</h1>
+    <h2>SmartTask Manager - Université</h2>
+
+    <p>Nous certifions que</p>
+    <p class="name">{{ inscription.user.username ?? inscription.user.email }}</p>
+
+    <p>a participé à la formation</p>
+    <p class="name">{{ inscription.formation.titre }}</p>
+
+    <p>
+        réalisée du
+        {{ inscription.formation.dateDebut|date('d/m/Y') }}
+        au
+        {{ inscription.formation.dateFin|date('d/m/Y') }}.
+    </p>
+
+    <p class="footer">
+        Généré le {{ "now"|date('d/m/Y') }} via l'application de gestion intelligente des tâches.
+    </p>
+</div>
+</body>
+</html>
+

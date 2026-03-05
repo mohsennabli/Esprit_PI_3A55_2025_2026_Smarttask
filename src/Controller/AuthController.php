@@ -24,7 +24,6 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
 final class AuthController extends AbstractController
 {
@@ -177,17 +176,23 @@ final class AuthController extends AbstractController
                 $this->entityManager->flush();
 
                 // Send email
-                $templatedEmail = (new TemplatedEmail())
+                $resetUrl = $this->generateUrl('app_reset_password', ['token' => $token], \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL);
+                $username = $user->getName() ?? $user->getEmail();
+                
+                $body = "Hello $username,\n\n"
+                    . "You have requested to reset your password for your SmartTask Manager account.\n\n"
+                    . "Please click the link below to set a new password. This link will expire in 1 hour:\n"
+                    . $resetUrl . "\n\n"
+                    . "If you did not request this, please ignore this email.\n\n"
+                    . "© " . date('Y') . " SmartTask Manager. All rights reserved.";
+
+                $email = (new Email())
                     ->from('mohsennabli321@gmail.com')
                     ->to($user->getEmail())
                     ->subject('Your password reset request')
-                    ->htmlTemplate('email/reset_password.html.twig')
-                    ->context([
-                        'user' => $user,
-                        'resetToken' => $token,
-                    ]);
+                    ->text($body);
 
-                $mailer->send($templatedEmail);
+                $mailer->send($email);
             }
 
             // Always show the same message for security

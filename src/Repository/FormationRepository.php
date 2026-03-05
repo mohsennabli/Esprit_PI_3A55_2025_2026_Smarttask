@@ -6,7 +6,6 @@ use App\Entity\Formation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-
 class FormationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -14,35 +13,58 @@ class FormationRepository extends ServiceEntityRepository
         parent::__construct($registry, Formation::class);
     }
 
-    public function searchAndSort(
-        ?string $search = null,
-        ?string $niveau = null,
-        ?string $statut = null,
-        ?string $sortBy = 'id',
-        ?string $order = 'ASC'
-    ): array {
-        $qb = $this->createQueryBuilder('f');
+    /** Formations whose end date is before today and still active (to be marked completed). */
+    public function findEndedStillActive(): array
+    {
+        $today = new \DateTimeImmutable('today');
+        return $this->createQueryBuilder('f')
+            ->where('f.statut = :active')
+            ->andWhere('f.dateFin < :today')
+            ->setParameter('active', Formation::STATUT_ACTIVE)
+            ->setParameter('today', $today)
+            ->getQuery()
+            ->getResult();
+    }
 
-        if ($search !== null && $search !== '') {
-            $qb->andWhere('f.titre LIKE :search OR f.categorie LIKE :search OR f.description LIKE :search')
-               ->setParameter('search', '%' . $search . '%');
-        }
+    /** Formations starting within the given date range (for reminders). */
+    public function findStartingBetween(\DateTimeInterface $from, \DateTimeInterface $to): array
+    {
+        return $this->createQueryBuilder('f')
+            ->where('f.dateDebut BETWEEN :from AND :to')
+            ->andWhere('f.statut = :active')
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->setParameter('active', Formation::STATUT_ACTIVE)
+            ->getQuery()
+            ->getResult();
+    }
 
-        if ($niveau !== null && $niveau !== '') {
-            $qb->andWhere('f.niveau = :niveau')->setParameter('niveau', $niveau);
-        }
+    /** Upcoming formations in the next 7 days (for dashboard). */
+    public function findUpcomingThisWeek(): array
+    {
+        $today = new \DateTimeImmutable('today');
+        $end = $today->modify('+7 days');
+        return $this->createQueryBuilder('f')
+            ->where('f.dateDebut >= :today')
+            ->andWhere('f.dateDebut <= :end')
+            ->andWhere('f.statut = :active')
+            ->setParameter('today', $today)
+            ->setParameter('end', $end)
+            ->setParameter('active', Formation::STATUT_ACTIVE)
+            ->orderBy('f.dateDebut', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 
-        if ($statut !== null && $statut !== '') {
-            $qb->andWhere('f.statut = :statut')->setParameter('statut', $statut);
-        }
-
-        $allowedSort = ['id', 'titre', 'dateDebut', 'dateFin', 'niveau', 'statut', 'duree'];
-        if (!in_array($sortBy, $allowedSort, true)) {
-            $sortBy = 'id';
-        }
-
-        $qb->orderBy('f.' . $sortBy, $order === 'DESC' ? 'DESC' : 'ASC');
-
+    /** Most popular formation by inscription count (for dashboard). */
+    public function findMostPopular(?int $limit = 1): array
+    {
+        $qb = $this->createQueryBuilder('f')
+            ->select('f', 'COUNT(i.id) AS HIDDEN cnt')
+            ->leftJoin('f.inscriptions', 'i')
+            ->groupBy('f.id')
+            ->orderBy('cnt', 'DESC')
+            ->setMaxResults($limit);
         return $qb->getQuery()->getResult();
     }
 }

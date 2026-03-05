@@ -37,3 +37,9 @@ services:
     App\Service\EmailNotificationService:
         arguments:
             $adminEmail: '%env(ADMIN_EMAIL)%'
+
+    App\Service\GoogleCalendarService:
+        arguments:
+            $credentialsPath: '%env(GOOGLE_APPLICATION_CREDENTIALS)%'
+            $calendarIdParam: '%env(GOOGLE_CALENDAR_ID)%'
+            $projectDir: '%kernel.project_dir%'

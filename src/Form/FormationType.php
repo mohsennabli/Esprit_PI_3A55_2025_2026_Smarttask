@@ -76,6 +76,15 @@ class FormationType extends AbstractType
                 ],
                 'attr' => ['class' => 'form-select'],
             ])
+            ->add('capacity', IntegerType::class, [
+                'label'    => 'Capacité max. (inscriptions)',
+                'required' => false,
+                'attr'     => [
+                    'class'       => 'form-control',
+                    'min'         => 1,
+                    'placeholder' => 'Illimité si vide',
+                ],
+            ])
         ;
     }
 

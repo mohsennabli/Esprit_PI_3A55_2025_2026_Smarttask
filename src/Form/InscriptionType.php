@@ -19,43 +19,60 @@ class InscriptionType extends AbstractType
     {
         $builder
             ->add('user', EntityType::class, [
-                'label'        => 'Utilisateur',
-                'class'        => User::class,
-                'choice_label' => function (User $u): string {
-                    return $u->getName() . ' (' . $u->getEmail() . ')';
+                'class' => User::class,
+                'label' => 'Utilisateur',
+                'choice_label' => function (User $user): string {
+                    return $user->getName() . ' (' . $user->getEmail() . ')';
                 },
-                'attr'         => ['class' => 'form-select'],
-            ])
-            ->add('formation', EntityType::class, [
-                'label'        => 'Formation',
-                'class'        => Formation::class,
-                'choice_label' => 'titre',
-                'attr'         => ['class' => 'form-select'],
-            ])
-            ->add('statut', ChoiceType::class, [
-                'label'   => 'Statut',
-                'choices' => [
-                    'En cours'   => Inscription::STATUT_EN_COURS,
-                    'Complétée'  => Inscription::STATUT_COMPLETEE,
-                    'Abandonnée' => Inscription::STATUT_ABANDONNEE,
+                'placeholder' => 'Choisir un utilisateur',
+                'attr' => [
+                    'class' => 'form-select'
                 ],
-                'attr' => ['class' => 'form-select'],
             ])
+
+            ->add('formation', EntityType::class, [
+                'class' => Formation::class,
+                'label' => 'Formation',
+                'choice_label' => 'titre',
+                'placeholder' => 'Choisir une formation',
+                'attr' => [
+                    'class' => 'form-select'
+                ],
+            ])
+
+            ->add('statut', ChoiceType::class, [
+                'label' => 'Statut',
+                'choices' => [
+                    'En cours' => Inscription::STATUT_EN_COURS,
+                    'Complétée' => Inscription::STATUT_COMPLETEE,
+                    'Abandonnée' => Inscription::STATUT_ABANDONNEE,
+                    'Absent' => Inscription::STATUT_ABSENT,
+                ],
+                'placeholder' => 'Choisir un statut',
+                'attr' => [
+                    'class' => 'form-select'
+                ],
+            ])
+
             ->add('progression', IntegerType::class, [
                 'label' => 'Progression (%)',
-                'attr'  => [
+                'attr' => [
                     'class' => 'form-control',
-                    'min'   => 0,
-                    'max'   => 100,
+                    'min' => 0,
+                    'max' => 100,
                 ],
             ])
+
             ->add('certificat', CheckboxType::class, [
-                'label'    => 'Certificat obtenu',
+                'label' => 'Certificat obtenu',
                 'required' => false,
-                'attr'     => ['class' => 'form-check-input'],
-                'label_attr' => ['class' => 'form-check-label'],
-            ])
-        ;
+                'attr' => [
+                    'class' => 'form-check-input'
+                ],
+                'label_attr' => [
+                    'class' => 'form-check-label'
+                ],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -11,10 +11,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Inscription
 {
 
-    public const STATUT_EN_COURS  = 'en_cours';
+    public const STATUT_EN_COURS   = 'en_cours';
     public const STATUT_COMPLETEE = 'completee';
     public const STATUT_ABANDONNEE = 'abandonnee';
-
+    public const STATUT_ABSENT     = 'absent';
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -27,7 +27,7 @@ class Inscription
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank(message: 'Le statut est obligatoire.')]
     #[Assert\Choice(
-        choices: [self::STATUT_EN_COURS, self::STATUT_COMPLETEE, self::STATUT_ABANDONNEE],
+        choices: [self::STATUT_EN_COURS, self::STATUT_COMPLETEE, self::STATUT_ABANDONNEE, self::STATUT_ABSENT],
         message: 'Statut invalide.'
     )]
     private ?string $statut = self::STATUT_EN_COURS;
@@ -53,6 +53,10 @@ class Inscription
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     #[Assert\NotBlank(message: 'La formation est obligatoire.')]
     private ?Formation $formation = null;
+
+    /** When the "absent" follow-up email was sent (to avoid duplicate sends). */
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $absentFollowUpSentAt = null;
 
     public function __construct()
     {
@@ -128,6 +132,17 @@ class Inscription
     public function setFormation(?Formation $formation): static
     {
         $this->formation = $formation;
+        return $this;
+    }
+
+    public function getAbsentFollowUpSentAt(): ?\DateTimeInterface
+    {
+        return $this->absentFollowUpSentAt;
+    }
+
+    public function setAbsentFollowUpSentAt(?\DateTimeInterface $absentFollowUpSentAt): static
+    {
+        $this->absentFollowUpSentAt = $absentFollowUpSentAt;
         return $this;
     }
 }
