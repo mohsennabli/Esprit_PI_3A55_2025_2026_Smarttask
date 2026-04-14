@@ -2,6 +2,7 @@ package com.smarttask.controller;
 
 import com.smarttask.dao.UserDAO;
 import com.smarttask.model.User;
+import com.smarttask.util.AppSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -50,12 +51,12 @@ public class LoginController implements Initializable {
         UserDAO userDAO = new UserDAO();
         User user = userDAO.login(email, password);
         if (user != null) {
+            AppSession.setCurrentUser(user);
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/smarttask/users.fxml"));
                 Stage stage = (Stage) loginButton.getScene().getWindow();
                 stage.setScene(new Scene(loader.load()));
                 stage.show();
-                System.out.println("Login successful: " + user.getEmail());
             } catch (IOException e) {
                 showAlert(Alert.AlertType.ERROR, "Navigation Error", "Unable to open users screen.");
             }

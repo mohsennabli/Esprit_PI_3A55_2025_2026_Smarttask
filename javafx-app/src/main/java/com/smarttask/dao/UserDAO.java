@@ -2,6 +2,7 @@ package com.smarttask.dao;
 
 import com.smarttask.model.User;
 import com.smarttask.util.DatabaseConnection;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,10 +21,15 @@ public class UserDAO {
             connection = DatabaseConnection.getConnection();
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 String roles = user.getRoles() == null ? "[]" : user.getRoles();
+                String rawPassword = user.getPassword();
+                if (rawPassword == null || rawPassword.isBlank()) {
+                    return false;
+                }
+                String hashedPassword = BCrypt.hashpw(rawPassword, BCrypt.gensalt());
 
                 statement.setString(1, user.getName());
                 statement.setString(2, user.getEmail());
-                statement.setString(3, user.getPassword());
+                statement.setString(3, hashedPassword);
                 statement.setString(4, user.getType());
                 statement.setString(5, roles);
                 statement.setInt(6, 1);
@@ -225,22 +231,30 @@ public class UserDAO {
     }
 
     public User login(String email, String password) {
-        String sql = "SELECT * FROM user WHERE email = ? AND password = ? AND is_enabled = 1";
+        String sql = "SELECT * FROM user WHERE email = ? AND is_enabled = 1";
         Connection connection = null;
 
         try {
             connection = DatabaseConnection.getConnection();
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, email);
-                statement.setString(2, password);
 
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
+                        String hashedPassword = resultSet.getString("password");
+                        try {
+                            if (hashedPassword == null || !BCrypt.checkpw(password, hashedPassword)) {
+                                return null;
+                            }
+                        } catch (IllegalArgumentException e) {
+                            return null;
+                        }
+
                         User user = new User();
                         user.setIduser(resultSet.getInt("iduser"));
                         user.setName(resultSet.getString("name"));
                         user.setEmail(resultSet.getString("email"));
-                        user.setPassword(resultSet.getString("password"));
+                        user.setPassword(hashedPassword);
                         user.setType(resultSet.getString("type"));
                         user.setGoogleId(resultSet.getString("google_id"));
                         user.setRoles(resultSet.getString("roles"));

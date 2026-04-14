@@ -2,6 +2,7 @@ package com.smarttask.controller;
 
 import com.smarttask.dao.UserDAO;
 import com.smarttask.model.User;
+import com.smarttask.util.AppSession;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -61,6 +62,9 @@ public class UserListController implements Initializable {
 
     @FXML
     private Button disableButton;
+
+    @FXML
+    private Button logoutButton;
 
     @FXML
     private TextField searchField;
@@ -221,6 +225,23 @@ public class UserListController implements Initializable {
             loadUsers();
         } else {
             showAlert(Alert.AlertType.ERROR, "Update Failed", "Unable to disable user. Please try again.");
+        }
+    }
+
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        AppSession.clear();
+        usersTable.getItems().clear();
+        usersTable.getSelectionModel().clearSelection();
+        searchField.clear();
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/smarttask/login.fxml"));
+            Stage stage = (Stage) logoutButton.getScene().getWindow();
+            stage.setScene(new Scene(loader.load()));
+            stage.show();
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Navigation Error", "Unable to return to login screen.");
         }
     }
 

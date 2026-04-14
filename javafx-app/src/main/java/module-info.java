@@ -2,6 +2,7 @@ module com.smarttask {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires jbcrypt;
 
     opens com.smarttask to javafx.graphics, javafx.fxml;
     opens com.smarttask.controller to javafx.fxml;
