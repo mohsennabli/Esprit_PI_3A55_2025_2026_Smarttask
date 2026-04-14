@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDAO {
     public boolean register(User user) {
@@ -58,6 +60,55 @@ public class UserDAO {
         }
 
         return false;
+    }
+
+    public List<User> getAllUsers() {
+        String sql = "SELECT * FROM user ORDER BY iduser ASC";
+        Connection connection = null;
+        List<User> users = new ArrayList<>();
+
+        try {
+            connection = DatabaseConnection.getConnection();
+            try (PreparedStatement statement = connection.prepareStatement(sql);
+                 ResultSet resultSet = statement.executeQuery()) {
+
+                while (resultSet.next()) {
+                    User user = new User();
+                    user.setIduser(resultSet.getInt("iduser"));
+                    user.setName(resultSet.getString("name"));
+                    user.setEmail(resultSet.getString("email"));
+                    user.setPassword(resultSet.getString("password"));
+                    user.setType(resultSet.getString("type"));
+                    user.setGoogleId(resultSet.getString("google_id"));
+                    user.setRoles(resultSet.getString("roles"));
+                    user.setEnabled(resultSet.getBoolean("is_enabled"));
+                    user.setLinkedinId(resultSet.getString("linkedin_id"));
+                    user.setResetToken(resultSet.getString("reset_token"));
+
+                    Timestamp resetTokenExpiresAtTs = resultSet.getTimestamp("reset_token_expires_at");
+                    if (resetTokenExpiresAtTs != null) {
+                        user.setResetTokenExpiresAt(resetTokenExpiresAtTs.toLocalDateTime());
+                    }
+
+                    user.setAvatarName(resultSet.getString("avatar_name"));
+
+                    Timestamp updatedAtTs = resultSet.getTimestamp("updated_at");
+                    if (updatedAtTs != null) {
+                        user.setUpdatedAt(updatedAtTs.toLocalDateTime());
+                    }
+
+                    user.setFaceEmbedding(resultSet.getString("face_embedding"));
+                    users.add(user);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Failed to fetch users: " + e.getMessage());
+            return new ArrayList<>();
+        } finally {
+            DatabaseConnection.closeConnection(connection);
+        }
+
+        return users;
     }
 
     public User login(String email, String password) {

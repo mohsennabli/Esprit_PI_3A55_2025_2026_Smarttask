@@ -50,8 +50,15 @@ public class LoginController implements Initializable {
         UserDAO userDAO = new UserDAO();
         User user = userDAO.login(email, password);
         if (user != null) {
-            showAlert(Alert.AlertType.INFORMATION, "Welcome", "Welcome, " + user.getName() + "!");
-            System.out.println("Login successful: " + user.getEmail());
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/smarttask/users.fxml"));
+                Stage stage = (Stage) loginButton.getScene().getWindow();
+                stage.setScene(new Scene(loader.load()));
+                stage.show();
+                System.out.println("Login successful: " + user.getEmail());
+            } catch (IOException e) {
+                showAlert(Alert.AlertType.ERROR, "Navigation Error", "Unable to open users screen.");
+            }
         } else {
             showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid credentials or account disabled.");
         }
