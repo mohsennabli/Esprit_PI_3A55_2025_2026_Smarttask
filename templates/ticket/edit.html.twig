@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">✏️ Modifier le ticket #{{ ticket.id }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Titre *</label>
+                        <input type="text" name="titre" class="form-control" value="{{ ticket.titre }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" rows="4">{{ ticket.description }}</textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Statut</label>
+                            <select name="statut" class="form-select">
+                                <option value="open" {% if ticket.statut == 'open' %}selected{% endif %}>Ouvert</option>
+                                <option value="in_progress" {% if ticket.statut == 'in_progress' %}selected{% endif %}>En cours</option>
+                                <option value="resolved" {% if ticket.statut == 'resolved' %}selected{% endif %}>Résolu</option>
+                                <option value="closed" {% if ticket.statut == 'closed' %}selected{% endif %}>Fermé</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Priorité</label>
+                            <select name="priorite" class="form-select">
+                                <option value="low" {% if ticket.priorite == 'low' %}selected{% endif %}>Basse</option>
+                                <option value="medium" {% if ticket.priorite == 'medium' %}selected{% endif %}>Moyenne</option>
+                                <option value="high" {% if ticket.priorite == 'high' %}selected{% endif %}>Haute</option>
+                                <option value="urgent" {% if ticket.priorite == 'urgent' %}selected{% endif %}>Urgente</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ path('ticket_index') }}" class="btn btn-secondary">Annuler</a>
+                        <button type="submit" class="btn btn-primary">💾 Enregistrer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

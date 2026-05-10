@@ -1,0 +1,57 @@
+ticket_index:
+    path: /ticket
+    controller: App\Controller\TicketController::index
+    methods: GET
+
+ticket_new:
+    path: /ticket/new
+    controller: App\Controller\TicketController::new
+    methods: [GET, POST]
+
+ticket_show:
+    path: /ticket/{id}
+    controller: App\Controller\TicketController::show
+    methods: GET
+
+ticket_edit:
+    path: /ticket/{id}/edit
+    controller: App\Controller\TicketController::edit
+    methods: [GET, POST]
+
+ticket_delete:
+    path: /ticket/{id}/delete
+    controller: App\Controller\TicketController::delete
+    methods: POST
+
+index:
+    path: /
+    controller: App\Controller\TicketController::index
+    methods: GET
+# Statistiques
+statistiques_index:
+    path: /statistiques
+    controller: App\Controller\StatistiquesController::index
+
+# Chatbot
+chatbot_index:
+    path: /chatbot
+    controller: App\Controller\ChatbotController::index
+
+api_chatbot:
+    path: /api/chatbot
+    controller: App\Controller\ChatbotController::chatbot
+    methods: POST
+
+# Calendrier
+calendar_index:
+    path: /calendrier
+    controller: App\Controller\CalendarController::index
+# Commentaires
+commentaire_new:
+    path: /commentaire/{ticketId}/new
+    controller: App\Controller\CommentaireController::new
+    methods: POST
+commentaire_delete:
+    path: /commentaire/{id}/delete
+    controller: App\Controller\CommentaireController::delete
+    methods: POST

@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SmartTask - Assistant IA{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">🤖 Assistant SmartTask</h4>
+                    </div>
+                    <div class="card-body" style="height: 400px; overflow-y: auto;" id="chatMessages">
+                        <div class="text-center text-muted my-5" id="welcomeMessage">
+                            <p>👋 Bonjour ! Je suis votre assistant SmartTask.</p>
+                            <p>Tapez <strong>'aide'</strong> pour voir mes commandes !</p>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="input-group">
+                            <input type="text" id="messageInput" class="form-control" placeholder="Posez votre question...">
+                            <button class="btn btn-primary" id="sendBtn">📤 Envoyer</button>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-muted">💡 Suggestions :</small>
+                            <div class="mt-1">
+                                <button class="btn btn-sm btn-outline-secondary suggestion-btn">aide</button>
+                                <button class="btn btn-sm btn-outline-secondary suggestion-btn">statistiques</button>
+                                <button class="btn btn-sm btn-outline-secondary suggestion-btn">tickets urgents</button>
+                                <button class="btn btn-sm btn-outline-secondary suggestion-btn">total</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        function addMessage(text, isUser = true) {
+            const welcomeMsg = document.getElementById('welcomeMessage');
+            if (welcomeMsg) welcomeMsg.remove();
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `d-flex ${isUser ? 'justify-content-end' : 'justify-content-start'} mb-2`;
+            messageDiv.innerHTML = `
+            <div class="p-2 rounded ${isUser ? 'bg-primary text-white' : 'bg-secondary text-white'}" style="max-width: 80%;">
+                <small>${isUser ? '👤 Moi' : '🤖 Assistant'}</small><br>
+                <span style="white-space: pre-line;">${text}</span>
+            </div>
+        `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            addMessage(message, true);
+            messageInput.value = '';
+
+            try {
+                const response = await fetch('/api/chatbot', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message })
+                });
+                const data = await response.json();
+                setTimeout(() => addMessage(data.response, false), 300);
+            } catch (error) {
+                addMessage('❌ Erreur de connexion', false);
+            }
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+        document.querySelectorAll('.suggestion-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                messageInput.value = btn.textContent;
+                sendMessage();
+            });
+        });
+    </script>
+{% endblock %}

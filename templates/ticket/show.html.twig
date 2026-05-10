@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">👁️ Détail du ticket #{{ ticket.id }}</h4>
+            </div>
+            <div class="card-body">
+                <!-- Informations du ticket -->
+                <table class="table table-bordered">
+                    <tr>
+                        <th style="width: 150px;">ID</th>
+                        <td>{{ ticket.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Titre</th>
+                        <td>{{ ticket.titre }}</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>{{ ticket.description ?: 'Aucune description' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Statut</th>
+                        <td>
+                            {% if ticket.statut == 'open' %}
+                                <span class="badge bg-warning text-dark">Ouvert</span>
+                            {% elseif ticket.statut == 'in_progress' %}
+                                <span class="badge bg-info">En cours</span>
+                            {% elseif ticket.statut == 'resolved' %}
+                                <span class="badge bg-success">Résolu</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Fermé</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Priorité</th>
+                        <td>
+                            {% if ticket.priorite == 'low' %}
+                                <span class="badge bg-secondary">Basse</span>
+                            {% elseif ticket.priorite == 'medium' %}
+                                <span class="badge bg-primary">Moyenne</span>
+                            {% elseif ticket.priorite == 'high' %}
+                                <span class="badge bg-warning text-dark">Haute</span>
+                            {% else %}
+                                <span class="badge bg-danger">Urgente</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Date de création</th>
+                        <td>{{ ticket.dateCreation|date('d/m/Y H:i:s') }}</td>
+                    </tr>
+                </table>
+
+                <!-- Formulaire d'ajout de commentaire -->
+                <div class="card mt-4">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0">💬 Ajouter un commentaire</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="{{ path('commentaire_new', {'ticketId': ticket.id}) }}">
+                            <div class="mb-3">
+                                <textarea name="contenu" class="form-control" rows="3" placeholder="Écrire un commentaire..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">➕ Ajouter</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Liste des commentaires -->
+                <div class="card mt-4">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0">📝 Historique des commentaires ({{ ticket.commentaires|length }})</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-striped mb-0">
+                            <thead>
+                            <tr>
+                                <th>Commentaire</th>
+                                <th style="width: 180px">Date</th>
+                                <th style="width: 80px">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for commentaire in ticket.commentaires %}
+                                <tr>
+                                    <td>{{ commentaire.contenu }}</td>
+                                    <td>{{ commentaire.dateCommentaire|date('d/m/Y H:i:s') }}</td>
+                                    <td>
+                                        <form method="post" action="{{ path('commentaire_delete', {'id': commentaire.id}) }}" onsubmit="return confirm('Supprimer ce commentaire ?')">
+                                            <button class="btn btn-sm btn-danger">🗑️</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted">Aucun commentaire pour ce ticket</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{{ path('ticket_index') }}" class="btn btn-secondary">← Retour à la liste</a>
+                    <div>
+                        <a href="{{ path('ticket_edit', {'id': ticket.id}) }}" class="btn btn-warning">✏️ Modifier</a>
+                        <form method="post" action="{{ path('ticket_delete', {'id': ticket.id}) }}" style="display:inline">
+                            <button class="btn btn-danger" onclick="return confirm('Supprimer ce ticket ?')">🗑️ Supprimer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
