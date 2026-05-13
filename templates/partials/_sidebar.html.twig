@@ -40,6 +40,36 @@
                         </a>
                     </li>
                     
+                    <li class="nav-item">
+                        <a class="nav-link {{ app.request.get('_route') starts with 'ticket' or app.request.get('_route') starts with 'calendar' or app.request.get('_route') starts with 'statistiques' or app.request.get('_route') starts with 'chatbot' ? 'active' : '' }}" 
+                           data-bs-toggle="collapse" href="#collapseSupportAdmin" role="button" aria-expanded="false">
+                            <i class="bi bi-headset fa-fw me-2"></i>Support & Services
+                        </a>
+                        <ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'ticket' or app.request.get('_route') starts with 'calendar' or app.request.get('_route') starts with 'statistiques' or app.request.get('_route') starts with 'chatbot' ? 'show' : '' }}" 
+                            id="collapseSupportAdmin" data-bs-parent="#navbar-sidebar">
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') starts with 'ticket' ? 'active' : '' }}" href="{{ path('ticket_index') }}">
+                                    <i class="bi bi-ticket-perforated fa-fw me-2"></i>Tickets
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') starts with 'calendar' ? 'active' : '' }}" href="{{ path('calendar_index') }}">
+                                    <i class="bi bi-calendar fa-fw me-2"></i>Calendrier
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') starts with 'statistiques' ? 'active' : '' }}" href="{{ path('statistiques_index') }}">
+                                    <i class="bi bi-pie-chart fa-fw me-2"></i>Statistiques
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') starts with 'chatbot' ? 'active' : '' }}" href="{{ path('chatbot_index') }}">
+                                    <i class="bi bi-robot fa-fw me-2"></i>Chatbot AI
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    
                 {% elseif is_granted('ROLE_MANAGER') %}
                     
                     <li class="nav-item ms-2 my-2">Team Management</li>
@@ -88,6 +118,37 @@
                         </ul>
                     </li>
 
+                    <li class="nav-item ms-2 my-2">Support & Services</li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ app.request.get('_route') starts with 'ticket' or app.request.get('_route') starts with 'calendar' or app.request.get('_route') starts with 'statistiques' or app.request.get('_route') starts with 'chatbot' ? 'active' : '' }}" 
+                           data-bs-toggle="collapse" href="#collapseSupportManager" role="button" aria-expanded="false">
+                            <i class="bi bi-headset fa-fw me-2"></i>Support
+                        </a>
+                        <ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'ticket' or app.request.get('_route') starts with 'calendar' or app.request.get('_route') starts with 'statistiques' or app.request.get('_route') starts with 'chatbot' ? 'show' : '' }}" 
+                            id="collapseSupportManager" data-bs-parent="#navbar-sidebar">
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') starts with 'ticket' ? 'active' : '' }}" href="{{ path('ticket_index') }}">
+                                    <i class="bi bi-ticket-perforated fa-fw me-2"></i>Tickets
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') starts with 'calendar' ? 'active' : '' }}" href="{{ path('calendar_index') }}">
+                                    <i class="bi bi-calendar fa-fw me-2"></i>Calendrier
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') starts with 'statistiques' ? 'active' : '' }}" href="{{ path('statistiques_index') }}">
+                                    <i class="bi bi-pie-chart fa-fw me-2"></i>Statistiques
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') starts with 'chatbot' ? 'active' : '' }}" href="{{ path('chatbot_index') }}">
+                                    <i class="bi bi-robot fa-fw me-2"></i>Chatbot AI
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <li class="nav-item ms-2 my-2">Reports</li>
                     <li class="nav-item">
                         <a href="{{ path('app_dashboard_index') }}" class="nav-link {{ app.request.get('_route') == 'app_dashboard_index' ? 'active' : '' }}">
@@ -109,6 +170,37 @@
                         <a href="{{ path('app_projet_index') }}" class="nav-link {{ app.request.get('_route') starts with 'app_projet' ? 'active' : '' }}">
                             <i class="fas fa-project-diagram fa-fw me-2"></i>Projects
                         </a>
+                    </li>
+
+                    <li class="nav-item ms-2 my-2">Support & Services</li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ app.request.get('_route') starts with 'ticket' or app.request.get('_route') starts with 'calendar' or app.request.get('_route') starts with 'statistiques' or app.request.get('_route') starts with 'chatbot' ? 'active' : '' }}" 
+                           data-bs-toggle="collapse" href="#collapseSupportCollab" role="button" aria-expanded="false">
+                            <i class="bi bi-headset fa-fw me-2"></i>Support
+                        </a>
+                        <ul class="nav collapse flex-column {{ app.request.get('_route') starts with 'ticket' or app.request.get('_route') starts with 'calendar' or app.request.get('_route') starts with 'statistiques' or app.request.get('_route') starts with 'chatbot' ? 'show' : '' }}" 
+                            id="collapseSupportCollab" data-bs-parent="#navbar-sidebar">
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') starts with 'ticket' ? 'active' : '' }}" href="{{ path('ticket_index') }}">
+                                    <i class="bi bi-ticket-perforated fa-fw me-2"></i>Tickets
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') starts with 'calendar' ? 'active' : '' }}" href="{{ path('calendar_index') }}">
+                                    <i class="bi bi-calendar fa-fw me-2"></i>Calendrier
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') starts with 'statistiques' ? 'active' : '' }}" href="{{ path('statistiques_index') }}">
+                                    <i class="bi bi-pie-chart fa-fw me-2"></i>Statistiques
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ app.request.get('_route') starts with 'chatbot' ? 'active' : '' }}" href="{{ path('chatbot_index') }}">
+                                    <i class="bi bi-robot fa-fw me-2"></i>Chatbot AI
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
                     <li class="nav-item ms-2 my-2">Reports</li>

@@ -42,6 +42,17 @@
                         </ul>
                     </li>
 
+                    <li class="nav-item dropdown">
+                        <a class="nav-link fo-nav-link dropdown-toggle {{ app.request.get('_route') starts with 'ticket' or app.request.get('_route') starts with 'calendar' or app.request.get('_route') starts with 'statistiques' or app.request.get('_route') starts with 'chatbot' ? 'active' : '' }}" href="#" id="supportMenuManager" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Gestion des tickets
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="supportMenuManager">
+                            <li><a class="dropdown-item" href="{{ path('ticket_index') }}">Tickets</a></li>
+                            <li><a class="dropdown-item" href="{{ path('calendar_index') }}">Calendrier</a></li>
+                            <li><a class="dropdown-item" href="{{ path('statistiques_index') }}">Statistiques</a></li>
+                            <li><a class="dropdown-item" href="{{ path('chatbot_index') }}">Chatbot AI</a></li>
+                        </ul>
+                    </li>
                     
                     <li class="nav-item">
                         <a class="nav-link fo-nav-link {{ app.request.get('_route') == 'app_front_profile_edit' ? 'active' : '' }}" href="{{ path('app_front_profile_edit') }}">Settings</a>
@@ -49,6 +60,17 @@
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link fo-nav-link {{ app.request.get('_route') starts with 'app_projet' ? 'active' : '' }}" href="{{ path('app_projet_index') }}">Projects</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link fo-nav-link dropdown-toggle {{ app.request.get('_route') starts with 'ticket' or app.request.get('_route') starts with 'calendar' or app.request.get('_route') starts with 'statistiques' or app.request.get('_route') starts with 'chatbot' ? 'active' : '' }}" href="#" id="supportMenuCollab" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Gestion des tickets
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="supportMenuCollab">
+                            <li><a class="dropdown-item" href="{{ path('ticket_index') }}">Tickets</a></li>
+                            <li><a class="dropdown-item" href="{{ path('calendar_index') }}">Calendrier</a></li>
+                            <li><a class="dropdown-item" href="{{ path('statistiques_index') }}">Statistiques</a></li>
+                            <li><a class="dropdown-item" href="{{ path('chatbot_index') }}">Chatbot AI</a></li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link fo-nav-link" href="{{ path('app_dashboard_index') }}">Reports</a>

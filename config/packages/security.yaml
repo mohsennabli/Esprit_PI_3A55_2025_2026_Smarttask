@@ -50,30 +50,33 @@ security:
         - { path: ^/$, roles: PUBLIC_ACCESS }  # Homepage
         # Admin routes - ROLE_ADMIN only
         - { path: ^/admin, roles: ROLE_ADMIN }
-        
+
         # Collaborator CRUD (new/edit/delete specific collaborator) - ROLE_ADMIN only
         - { path: ^/collaborator/new, roles: ROLE_ADMIN }
         - { path: ^/collaborator/\d+/edit, roles: ROLE_ADMIN }
         - { path: ^/collaborator/\d+$, roles: ROLE_ADMIN }
-        
+
         # Manager CRUD - ROLE_ADMIN only
         - { path: ^/manager, roles: ROLE_ADMIN }
-        
+
         # Collaborator network page - ROLE_COLLABORATOR and above
         - { path: ^/collaborator/network, roles: ROLE_COLLABORATOR }
-        
+
         # Collaborator list (My Team for managers) - ROLE_MANAGER and above
         - { path: ^/collaborator$, roles: ROLE_MANAGER }
-        
+
         # Profile - all authenticated users
         - { path: ^/profile, roles: ROLE_USER }
-        
+
         # Dashboard - all authenticated users
         - { path: ^/dashboard, roles: ROLE_USER }
-        
+
         # Projects and Tasks - ROLE_PROJECT_ACCESS only (MANAGER + COLLABORATOR, NOT ADMIN)
         - { path: ^/projet, roles: ROLE_PROJECT_ACCESS }
         - { path: ^/tache, roles: ROLE_PROJECT_ACCESS }
+
+        # Ticket routes - allow all authenticated users
+        - { path: ^/ticket, roles: ROLE_USER }
 
 when@test:
     security:

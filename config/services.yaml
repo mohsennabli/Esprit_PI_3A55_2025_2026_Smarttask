@@ -37,4 +37,3 @@ services:
     App\Service\EmailNotificationService:
         arguments:
             $adminEmail: '%env(ADMIN_EMAIL)%'
-    

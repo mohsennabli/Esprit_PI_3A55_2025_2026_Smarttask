@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>🎫 Gestion des tickets</h1>
+            <a href="{{ path('ticket_new') }}" class="btn btn-primary">➕ Nouveau ticket</a>
+        </div>
+
+        <!-- Cartes statistiques -->
+        <div class="row mb-4">
+            <div class="col">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase fw-bold mb-2">Total</h6>
+                        <h2 class="text-primary fw-bold mb-0">{{ total }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase fw-bold mb-2">Ouverts</h6>
+                        <h2 class="text-warning fw-bold mb-0">{{ stats.open|default(0) }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase fw-bold mb-2">En cours</h6>
+                        <h2 class="text-info fw-bold mb-0">{{ stats.in_progress|default(0) }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase fw-bold mb-2">Résolus</h6>
+                        <h2 class="text-success fw-bold mb-0">{{ stats.resolved|default(0) }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h6 class="text-muted text-uppercase fw-bold mb-2">Fermés</h6>
+                        <h2 class="text-secondary fw-bold mb-0">{{ stats.closed|default(0) }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtres -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-5">
+                        <input type="text" name="search" class="form-control" placeholder="Rechercher..." value="{{ app.request.query.get('search') }}">
+                    </div>
+                    <div class="col-md-3">
+                        <select name="statut" class="form-select">
+                            <option value="">Tous statuts</option>
+                            <option value="open" {% if app.request.query.get('statut') == 'open' %}selected{% endif %}>Ouvert</option>
+                            <option value="in_progress" {% if app.request.query.get('statut') == 'in_progress' %}selected{% endif %}>En cours</option>
+                            <option value="resolved" {% if app.request.query.get('statut') == 'resolved' %}selected{% endif %}>Résolu</option>
+                            <option value="closed" {% if app.request.query.get('statut') == 'closed' %}selected{% endif %}>Fermé</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">🔍 Filtrer</button>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="{{ path('ticket_index') }}" class="btn btn-secondary w-100">❌ Réinitialiser</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tableau -->
+        <div class="card">
+            <div class="card-body p-0">
+                <table class="table table-striped mb-0">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Titre</th>
+                        <th>Statut</th>
+                        <th>Priorité</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for ticket in tickets %}
+                        <tr>
+                            <td>{{ ticket.id }}</td>
+                            <td>{{ ticket.titre }}</td>
+                            <td>
+                                {% if ticket.statut == 'open' %}
+                                    <span class="badge bg-warning text-dark">Ouvert</span>
+                                {% elseif ticket.statut == 'in_progress' %}
+                                    <span class="badge bg-info">En cours</span>
+                                {% elseif ticket.statut == 'resolved' %}
+                                    <span class="badge bg-success">Résolu</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Fermé</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if ticket.priorite == 'low' %}
+                                    <span class="badge bg-secondary">Basse</span>
+                                {% elseif ticket.priorite == 'medium' %}
+                                    <span class="badge bg-primary">Moyenne</span>
+                                {% elseif ticket.priorite == 'high' %}
+                                    <span class="badge bg-warning text-dark">Haute</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Urgente</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ ticket.dateCreation|date('d/m/Y H:i') }}</td>
+                            <td>
+                                <a href="{{ path('ticket_show', {'id': ticket.id}) }}" class="btn btn-sm btn-info" title="Voir les commentaires">💬</a>
+                                <a href="{{ path('ticket_edit', {'id': ticket.id}) }}" class="btn btn-sm btn-warning" title="Modifier">✏️</a>
+                                <form method="post" action="{{ path('ticket_delete', {'id': ticket.id}) }}" style="display:inline">
+                                    <button class="btn btn-sm btn-danger" onclick="return confirm('Supprimer ce ticket ?')" title="Supprimer">🗑️</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">Aucun ticket trouvé</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

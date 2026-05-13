@@ -122,6 +122,25 @@
                                 <a class="nav-link px-4 py-2 {{ app.request.pathInfo starts with '/tache/new' ? 'active' : '' }}" href="{{ path('app_tache_new') }}">Create Task</a>
                             </div>
 
+                            <div class="px-3 text-uppercase text-muted small fw-semibold mt-4">Support & Services</div>
+                            <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/ticket' or app.request.pathInfo starts with '/calendar' or app.request.pathInfo starts with '/statistiques' or app.request.pathInfo starts with '/chatbot' ? 'active' : '' }}" data-bs-toggle="collapse" href="#supportMenuManagerBase" role="button" aria-expanded="false">
+                                <i class="bi bi-headset me-2"></i>Support
+                            </a>
+                            <div class="collapse {{ app.request.pathInfo starts with '/ticket' or app.request.pathInfo starts with '/calendar' or app.request.pathInfo starts with '/statistiques' or app.request.pathInfo starts with '/chatbot' ? 'show' : '' }}" id="supportMenuManagerBase">
+                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo starts with '/ticket' ? 'active' : '' }}" href="{{ path('ticket_index') }}">
+                                    <i class="bi bi-ticket-perforated me-2"></i>Tickets
+                                </a>
+                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo starts with '/calendar' ? 'active' : '' }}" href="{{ path('calendar_index') }}">
+                                    <i class="bi bi-calendar me-2"></i>Calendrier
+                                </a>
+                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo starts with '/statistiques' ? 'active' : '' }}" href="{{ path('statistiques_index') }}">
+                                    <i class="bi bi-pie-chart me-2"></i>Statistiques
+                                </a>
+                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo starts with '/chatbot' ? 'active' : '' }}" href="{{ path('chatbot_index') }}">
+                                    <i class="bi bi-robot me-2"></i>Chatbot AI
+                                </a>
+                            </div>
+
                             <div class="px-3 text-uppercase text-muted small fw-semibold mt-4">Insights</div>
                             <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/dashboard' ? 'active' : '' }}" href="{{ path('app_dashboard_index') }}">
                                 <i class="bi bi-bar-chart me-2"></i>Reports & Statistics
@@ -135,6 +154,25 @@
                                 <i class="bi bi-kanban me-2"></i>Projects
                             </a>
 
+                            <div class="px-3 text-uppercase text-muted small fw-semibold mt-4">Support & Services</div>
+                            <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/ticket' or app.request.pathInfo starts with '/calendar' or app.request.pathInfo starts with '/statistiques' or app.request.pathInfo starts with '/chatbot' ? 'active' : '' }}" data-bs-toggle="collapse" href="#supportMenuCollabBase" role="button" aria-expanded="false">
+                                <i class="bi bi-headset me-2"></i>Support
+                            </a>
+                            <div class="collapse {{ app.request.pathInfo starts with '/ticket' or app.request.pathInfo starts with '/calendar' or app.request.pathInfo starts with '/statistiques' or app.request.pathInfo starts with '/chatbot' ? 'show' : '' }}" id="supportMenuCollabBase">
+                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo starts with '/ticket' ? 'active' : '' }}" href="{{ path('ticket_index') }}">
+                                    <i class="bi bi-ticket-perforated me-2"></i>Tickets
+                                </a>
+                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo starts with '/calendar' ? 'active' : '' }}" href="{{ path('calendar_index') }}">
+                                    <i class="bi bi-calendar me-2"></i>Calendrier
+                                </a>
+                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo starts with '/statistiques' ? 'active' : '' }}" href="{{ path('statistiques_index') }}">
+                                    <i class="bi bi-pie-chart me-2"></i>Statistiques
+                                </a>
+                                <a class="nav-link px-4 py-2 {{ app.request.pathInfo starts with '/chatbot' ? 'active' : '' }}" href="{{ path('chatbot_index') }}">
+                                    <i class="bi bi-robot me-2"></i>Chatbot AI
+                                </a>
+                            </div>
+
                             <div class="px-3 text-uppercase text-muted small fw-semibold mt-4">Reports</div>
                             <a class="nav-link px-3 py-2 {{ app.request.pathInfo starts with '/dashboard' ? 'active' : '' }}" href="{{ path('app_dashboard_index') }}">
                                 <i class="bi bi-bar-chart me-2"></i>Reports & Statistics
@@ -147,7 +185,7 @@
 
         <div class="app-shell">
             <main class="app-content">
-                {% block content %}{% endblock %}
+                {% block body %}{% endblock %}
             </main>
         </div>
 
